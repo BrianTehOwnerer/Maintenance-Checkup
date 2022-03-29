@@ -99,4 +99,3 @@ Remove-Item $PSScriptRoot/MC -recurse -Force
 
 #delete Powershell MC Script itself
 Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
-
