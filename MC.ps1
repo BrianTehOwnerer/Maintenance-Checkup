@@ -54,7 +54,7 @@ Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
 Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 Start-Process $PSScriptRoot\CCleaner64.exe -Wait
-Start-Process $PSScriptRoot\BatteryInfoView.exe /stabular battinfo.txt -Wait 
+Start-Process $PSScriptRoot\BatteryInfoView.exe -Wait 
 
 #Installs a program called chocolatey https://chocolatey.org/ which will allow
 #Us to install the latest MBAM/SAS/ADW
@@ -94,14 +94,14 @@ Write-Host "This will remove all traces that we were ever even here..."
 Write-Host -NoNewLine 'Press any key to continue...Otherwise just close the powershell window';
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
-#Uninstalls SAS and MBAM
+#Uninstalls SAS, MBAM, and ADW
 choco uninstall adwcleaner malwarebytes superantispyware -y 
 
-#Delete downloaded files
-Remove-Item $SUoutpath -Force
-Remove-Item $DAoutpath -Force
-Remove-Item $MCzippath -Force
-Remove-Item $PSScriptRoot/MC -recurse -Force
+#Delete downloaded files needs more testing before i let it delete everything
+#Remove-Item $SUoutpath -Force
+#Remove-Item $DAoutpath -Force
+#Remove-Item $MCzippath -Force
+#Remove-Item $PSScriptRoot/MC -recurse -Force
 
 #delete Powershell MC Script itself
-Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+#Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
