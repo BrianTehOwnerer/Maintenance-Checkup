@@ -42,6 +42,11 @@ Write-Output "Downloading and running jrt/cpu test/ccleaner"
 Write-Host -NoNewLine 'Press any key to continue...';
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
+#Killing web browser processess
+taskkill.exe /IM chrome.exe /F
+taskkill.exe /IM firefox.exe /F
+taskkill.exe /IM edge.exe /F
+
 #Download and Extract zip file with MC programs
 Invoke-WebRequest -Uri $MCZipUrl -OutFile $MCzippath 
 Expand-Archive -Path $MCzippath -DestinationPath $PSScriptRoot -force
@@ -49,7 +54,7 @@ Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
 Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 Start-Process $PSScriptRoot\CCleaner64.exe -Wait
-Start-Process $PSScriptRoot\BatteryInfoView.exe-Wait
+Start-Process $PSScriptRoot\BatteryInfoView.exe /stabular battinfo.txt -Wait 
 
 #Installs a program called chocolatey https://chocolatey.org/ which will allow
 #Us to install the latest MBAM/SAS/ADW
