@@ -48,7 +48,8 @@ Expand-Archive -Path $MCzippath -DestinationPath $PSScriptRoot -force
 Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
 Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
-Start-Process $PSScriptRoot\ccleanerx64.exe -Wait
+Start-Process $PSScriptRoot\CCleaner64.exe -Wait
+Start-Process $PSScriptRoot\BatteryInfoView.exe-Wait
 
 #Installs a program called chocolatey https://chocolatey.org/ which will allow
 #Us to install the latest MBAM/SAS/ADW
