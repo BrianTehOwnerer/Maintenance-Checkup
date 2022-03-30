@@ -10,7 +10,8 @@ SET PowerShellScriptPath=%ThisScriptsDirectory%MyPowerShellScript.ps1
 rem %PowerShellScriptPath%
 
 echo $DesktopPath = [Environment]::GetFolderPath("Desktop") >> start.ps1
-echo New-Item -Path $DesktopPath\SMC -ItemType "directory"
+echo Remove-Item -Path $DesktopPath\SMC -ItemType "directory" >> start.ps1
+echo New-Item -Path $DesktopPath\SMC -ItemType "directory" >> start.ps1
 echo Invoke-WebRequest -Uri https://raw.githubusercontent.com/briantehowenerer/Maintenance-Checkup/main/MC.ps1 -OutFile $DesktopPath\SMC\MC.ps1 >> start.ps1
 echo $MCScript = $DesktopPath\SMC\MC.ps1 >> start.ps1
 echo ^&$MCScript >> start.ps1
