@@ -105,3 +105,4 @@ choco uninstall adwcleaner malwarebytes superantispyware -y
 
 #delete Powershell MC Script itself
 #Remove-Item -LiteralPath $MyInvocation.MyCommand.Path -Force
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
