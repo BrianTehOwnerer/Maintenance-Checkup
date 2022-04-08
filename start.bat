@@ -6,7 +6,7 @@ cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) &&
 powershell Set-ExecutionPolicy -ExecutionPolicy Unrestricted
 
 SET ThisScriptsDirectory=%~dp0
-SET PowerShellScriptPath=%ThisScriptsDirectory%MyPowerShellScript.ps1
+SET PowerShellScriptPath=%ThisScriptsDirectory%start.ps1
 rem %PowerShellScriptPath%
 
 echo $DesktopPath = [Environment]::GetFolderPath("Desktop") >> start.ps1
