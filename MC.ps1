@@ -14,11 +14,7 @@ Enable-ComputerRestore -Drive "C:\"
 Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "MODIFY_SETTINGS"
 
 #Checking for an internet connection and waits for you to turn on the net.
-while (!(test-connection 8.8.8.8 -Count 1 -Quiet)) {
-    "please Connect to the internet to continue"
-    Start-Sleep 5
-}
-write-out "Internet Connection Established"
+
 
 #checks for SU and Drive Advisor, if not found installs them from the folders.
 if (Test-Path -Path "C:\Program Files (x86)\Secure Updater\Secure Updater.exe" -IsValid) {
@@ -39,7 +35,7 @@ else {
 }
 Clear-Host
 Write-Output "Downloading and running jrt/cpu test/ccleaner"
-Write-Host -NoNewLine 'Press any key to continue...';
+Write-Host "Press any key to continue...";
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
 #Killing web browser processess
@@ -59,7 +55,6 @@ Start-Process $PSScriptRoot\BatteryInfoView.exe -Wait
 #Installs a program called chocolatey https://chocolatey.org/ which will allow
 #Us to install the latest MBAM/SAS/ADW
 Write-Output "installing chocolatly for adw/mbam/sas. Press any key to continue"
-Write-Host -NoNewLine 'Press any key to continue...';
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
 #Gets Chocolatey and installs it from the internet
@@ -71,11 +66,11 @@ start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot\sfc.txt
 "Installing SAS, ADW, and MBAM..."
 choco install adwcleaner malwarebytes superantispyware -y --ignore-checksums --allow-empty-checksums
 
-Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.1.exe" -Wait
+
 start-process $PSScriptRoot\HDTune.exe
 Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
 Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
-
+Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.1.exe" -Wait
 
 
 #wait for imput at the end of the script
