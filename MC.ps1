@@ -4,8 +4,8 @@ $SecureUpdaterurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/
 $SUoutpath = "$PSScriptRoot/SecureUpdater.msi"
 $DriveAdvisorurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/driveadviser.msi"
 $DAoutpath = "$PSScriptRoot/driveadvisor.msi"
-$MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/MC.zip"
-$MCzippath = "$PSScriptRoot/MC.zip"
+$MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
+$MCzippath = "$PSScriptRoot/mc.zip"
 
 
 #turns on system restore for drive C and takes a snapshot.
