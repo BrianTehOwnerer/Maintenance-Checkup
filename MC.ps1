@@ -13,8 +13,6 @@ Enable-ComputerRestore -Drive "C:\"
 "System restore enabled"
 Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "MODIFY_SETTINGS"
 
-#Checking for an internet connection and waits for you to turn on the net.
-
 
 #checks for SU and Drive Advisor, if not found installs them from the folders.
 if (Test-Path -Path "C:\Program Files (x86)\Secure Updater\Secure Updater.exe" -IsValid) {
