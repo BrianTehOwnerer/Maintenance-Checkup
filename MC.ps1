@@ -17,7 +17,7 @@ Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "
 
 #checks for SU and Drive Advisor, if not found installs them from the folders.
 if (Test-Path -Path "C:\Program Files (x86)\Secure Updater\Secure Updater.exe") {
-    Write-Output "SU is already installed"
+    Write-Host "SU is already installed"
 }
 else {
     Invoke-WebRequest -Uri $SecureUpdaterurl -OutFile $SUoutpath
@@ -25,14 +25,14 @@ else {
 }
 
 if (Test-Path -Path "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe") {
-    write-out "Drive Adviser already installed"
+    Write-Host "Drive Adviser already installed"
 }
 else {
     Invoke-WebRequest -Uri $DriveAdvisorurl -OutFile $DAoutpath
     Start-Process $DAoutpath "/quiet" -wait
     Start-Process "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe"
 }
-Write-Output "Downloading and running jrt/cpu test/ccleaner"
+Write-Host "Downloading and running jrt/cpu test/ccleaner"
 Write-Host "Press any key to continue...";
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
@@ -44,7 +44,7 @@ taskkill.exe /IM edge.exe /F
 #Download and Extract zip file with MC programs
 Invoke-WebRequest -Uri $MCZipUrl -OutFile $MCzippath 
 Expand-Archive -Path $MCzippath -DestinationPath $PSScriptRoot -force
-Start-Process $PSScriptRoot\jrt.exe -wait
+#Start-Process $PSScriptRoot\jrt.exe -wait
 #Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
 Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
@@ -53,7 +53,7 @@ Start-Process $PSScriptRoot\BatteryInfoView.exe -Wait
 
 #Installs a program called chocolatey https://chocolatey.org/ which will allow
 #Us to install the latest MBAM/SAS/ADW
-Write-Output "installing chocolatly for adw/mbam/sas. Press any key to continue"
+Write-Host "installing chocolatly for adw/mbam/sas. Press any key to continue"
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
 #Gets Chocolatey and installs it from the internet
@@ -69,8 +69,8 @@ choco install adwcleaner malwarebytes superantispyware -y --ignore-checksums --a
 start-process $PSScriptRoot\HDTune.exe
 Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
 Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
-Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.1.exe" -Wait
-
+Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.1.exe" 
+Start-Process $PSScriptRoot\jrt.exe -wait
 
 #wait for imput at the end of the script
 Write-Host -NoNewLine 'Press any key to continue...';
