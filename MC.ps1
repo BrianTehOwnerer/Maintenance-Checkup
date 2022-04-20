@@ -15,7 +15,7 @@ Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "
 
 
 #checks for SU and Drive Advisor, if not found installs them from the folders.
-if (Test-Path -Path "C:\Program Files (x86)\Secure Updater\Secure Updater.exe" -IsValid) {
+if (Test-Path -Path "C:\Program Files (x86)\Secure Updater\Secure Updater.exe") {
     Write-Output "SU is already installed"
 }
 else {
@@ -23,7 +23,7 @@ else {
     Start-Process $SUoutpath "/quiet"
 }
 
-if (Test-Path -Path "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe" -IsValid) {
+if (Test-Path -Path "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe") {
     write-out "Drive Adviser already installed"
 }
 else {
