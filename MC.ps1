@@ -1,3 +1,4 @@
+Clear-Host
 ##Initialize Variables
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $SecureUpdaterurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/SecureUpdater.msi"
@@ -28,10 +29,9 @@ if (Test-Path -Path "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe") {
 }
 else {
     Invoke-WebRequest -Uri $DriveAdvisorurl -OutFile $DAoutpath
-    Start-Process $DAoutpath "/quiet"
+    Start-Process $DAoutpath "/quiet" -wait
     Start-Process "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe"
 }
-Clear-Host
 Write-Output "Downloading and running jrt/cpu test/ccleaner"
 Write-Host "Press any key to continue...";
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
@@ -44,7 +44,8 @@ taskkill.exe /IM edge.exe /F
 #Download and Extract zip file with MC programs
 Invoke-WebRequest -Uri $MCZipUrl -OutFile $MCzippath 
 Expand-Archive -Path $MCzippath -DestinationPath $PSScriptRoot -force
-Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
+Start-Process $PSScriptRoot\jrt.exe -wait
+#Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
 Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 Start-Process $PSScriptRoot\CCleaner64.exe -Wait
