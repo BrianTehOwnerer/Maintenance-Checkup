@@ -8,6 +8,34 @@ $DAoutpath = "$PSScriptRoot/driveadvisor.msi"
 $MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
 $MCzippath = "$PSScriptRoot/mc.zip"
 
+do {
+    Write-Host "============= Pick the Server environment=============="
+    Write-Host "`t1. 1) Install DA and SU"
+    Write-Host "`t2. 2) DL and Install all MC stuff"
+    Write-Host "`t3. 3) Run Scripts for MC"
+    Write-Host "`t4  4) Reports --Work in progress"
+    Write-Host "`t5. 5) Cleanup --Work in progress"
+    Write-Host "========================================================"
+} until (($choice -eq '1') -or ($choice -eq '2') -or ($choice -eq '3') -or ($choice -eq '4') -or ($choice -eq '5') )
+switch ($choice) {
+    '1' {
+       
+    }
+    '2' {
+        Write-Host "`nYou have selected a Test Environment"
+    }
+    '3' {
+        Write-Host "`nYou have selected a Dev Environment"
+    }
+    '3' {
+        Write-Host "`nYou have selected a Dev Environment"
+    }
+    '3' {
+        Write-Host "`nYou have selected a Dev Environment"
+    }
+}
+
+
 
 #turns on system restore for drive C and takes a snapshot.
 Enable-ComputerRestore -Drive "C:\"
