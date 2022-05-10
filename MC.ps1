@@ -69,7 +69,7 @@ choco install adwcleaner malwarebytes superantispyware -y --ignore-checksums --a
 start-process $PSScriptRoot\HDTune.exe
 Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
 Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
-Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.1.exe" 
+Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe" 
 Start-Process $PSScriptRoot\jrt.exe -wait
 
 #wait for imput at the end of the script
