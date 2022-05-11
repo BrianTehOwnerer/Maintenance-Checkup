@@ -1,4 +1,12 @@
 Clear-Host
+##Initialize Variables
+$DesktopPath = [Environment]::GetFolderPath("Desktop")
+$SecureUpdaterurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/SecureUpdater.msi"
+$SUoutpath = "$PSScriptRoot/SecureUpdater.msi"
+$DriveAdvisorurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/driveadviser.msi"
+$DAoutpath = "$PSScriptRoot/driveadvisor.msi"
+$MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
+$MCzippath = "$PSScriptRoot/mc.zip"
 
 <#
  .SYNOPSIS
@@ -13,14 +21,7 @@ Clear-Host
  General notes
  #>
 function Main {
-    ##Initialize Variables
-    $DesktopPath = [Environment]::GetFolderPath("Desktop")
-    $SecureUpdaterurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/SecureUpdater.msi"
-    $SUoutpath = "$PSScriptRoot/SecureUpdater.msi"
-    $DriveAdvisorurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/driveadviser.msi"
-    $DAoutpath = "$PSScriptRoot/driveadvisor.msi"
-    $MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
-    $MCzippath = "$PSScriptRoot/mc.zip"
+
     Menu
 }
 
@@ -134,13 +135,23 @@ Function RunMCScript {
     "System restore enabled"
     Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "MODIFY_SETTINGS"
 
+    $powercfgGUID = powercfg /getactivescheme
+    $powercfgGUID = $powercfgGUID.split( )[3]
+    $powercfgGUID | Out-File $PSScriptRoot\powercfg.txt
+    powercfg /import $PSScriptRoot\MCpowercfg.pow /GUID 11111111-1111-2222-2222-333333333333
+    powercfg /setactive 11111111-1111-2222-2222-333333333333
+
+    #Optimize the C drive
+    Get-PhysicalDisk | Where-Object mediatype -match "SSD"
+    Write-Output "Optimize c drive"
+    Optimize-Volume -DriveLetter C -ReTrim
+    
     #Killing web browser processess
     taskkill.exe /IM chrome.exe /F
     taskkill.exe /IM firefox.exe /F
     taskkill.exe /IM edge.exe /F
 
-    #Start-Process $PSScriptRoot\jrt.exe -wait
-    #Start-Process $PSScriptRoot\jrt\get.bat -WorkingDirectory $PSScriptRoot\jrt\
+
     Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
     start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
     Start-Process $PSScriptRoot\CCleaner64.exe -Wait
@@ -149,29 +160,31 @@ Function RunMCScript {
     #Running sfc scan and placing file onto desktop
     start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot\sfc.txt 
 
+    #Runs HDtune, SAS and MBAM and pauses untill mbam is closed.
     start-process $PSScriptRoot\HDTune.exe
     Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
     Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
-    Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.1.exe" 
+
+    #reset powercfg settings to pre-MC settings and delete our custom powercfg
+    powercfg /setactive $powercfgGUID
+    powercfg /delete 11111111-1111-2222-2222-333333333333
+
+    #Runs ADW and JRT, waits till jrt is closed <<Still need to prevent this closing our terminal window>>
+    Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe" 
     Start-Process $PSScriptRoot\jrt.exe -wait
 
     #wait for imput at the end of the script
     Write-Host -NoNewLine 'Press any key to continue...';
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
-    Clear-Host
-    Get-PhysicalDisk | Where-Object mediatype -match "SSD"
-    Write-Output "Optimize c drive"
-    Optimize-Volume -DriveLetter C -ReTrim
-    Write-Host -NoNewLine 'Press any key to continue...';
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 }
 
 Function Reports {
-#Nothing to report yet...
+    #Nothing to report yet...
 }
 
 Function Cleanup {
+
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
     #this removes the install listing for an the migration tool we used during symantec to sophos migration.
     Remove-Item -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\SophosMigrationUtility"
