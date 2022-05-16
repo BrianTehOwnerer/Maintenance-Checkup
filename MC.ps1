@@ -137,8 +137,8 @@ Function RunMCScript {
 
     $powercfgGUID = powercfg /getactivescheme
     $powercfgGUID = $powercfgGUID.split( )[3]
-    $powercfgGUID | Out-File $PSScriptRoot\powercfg.txt
-    powercfg /import $PSScriptRoot\MCpowercfg.pow /GUID 11111111-1111-2222-2222-333333333333
+    #$powercfgGUID | Out-File $PSScriptRoot\powercfg.txt
+    powercfg /import $PSScriptRoot\MCpowercfg.pow 11111111-1111-2222-2222-333333333333
     powercfg /setactive 11111111-1111-2222-2222-333333333333
 
     #Optimize the C drive
@@ -169,8 +169,10 @@ Function RunMCScript {
     powercfg /setactive $powercfgGUID
     powercfg /delete 11111111-1111-2222-2222-333333333333
 
-    #Runs ADW and JRT, waits till jrt is closed <<Still need to prevent this closing our terminal window>>
-    Start-Process "C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe" 
+    #Runs ADW and JRT, waits till jrt is closed 
+	#gets adw executablename and runs adw, logs to the root folder of the script
+	#$$adwversion =  get-childitem -path C:\ProgramData\chocolatey\lib\adwcleaner\tools\ -filter adw* -Name
+	C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe /eula /scan /noreboot /path $PSScriptRoot 
     Start-Process $PSScriptRoot\jrt.exe -wait
 
     #wait for imput at the end of the script
