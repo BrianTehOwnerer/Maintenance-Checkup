@@ -135,9 +135,11 @@ Function RunMCScript {
     "System restore enabled"
     Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "MODIFY_SETTINGS"
 
+	#Gets the current power configureation scheme
     $powercfgGUID = powercfg /getactivescheme
+	#Splits out just the GUID from the active scheme
     $powercfgGUID = $powercfgGUID.split( )[3]
-    #$powercfgGUID | Out-File $PSScriptRoot\powercfg.txt
+    #Imports our custom power config as that dumb GUID, then sets it as active
     powercfg /import $PSScriptRoot\MCpowercfg.pow 11111111-1111-2222-2222-333333333333
     powercfg /setactive 11111111-1111-2222-2222-333333333333
 
@@ -151,11 +153,12 @@ Function RunMCScript {
     taskkill.exe /IM firefox.exe /F
     taskkill.exe /IM edge.exe /F
 
-
+	#Installs the intel CPU tester, then runs ccleaner and the battery info view
     Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
     start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
     Start-Process $PSScriptRoot\CCleaner64.exe -Wait
     Start-Process $PSScriptRoot\BatteryInfoView.exe -Wait 
+    #Start-Process $PSScriptRoot\BatteryInfoView.exe /scomma $PSScriptRoot\Batteryinfo.csv
 
     #Running sfc scan and placing file onto desktop
     start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot\sfc.txt 
@@ -183,6 +186,7 @@ Function RunMCScript {
 
 Function Reports {
     #Nothing to report yet...
+	
 }
 
 Function Cleanup {
