@@ -124,6 +124,10 @@ Function DownloadFiles {
 	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 	"Installing SAS, ADW, and MBAM..."
 	choco install adwcleaner malwarebytes superantispyware -y --ignore-checksums --allow-empty-checksums
+	#delete any logs that happen to exist already for SAS or MBAM
+	Remove-Item C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\* -Recurse -Force
+	Remove-Item C:\ProgramData\Malwarebytes\MBAMService\ScanResults\* -Recurse -Force
+	
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 }
@@ -176,7 +180,7 @@ Function RunMCScript {
 	#gets adw executablename and runs adw, logs to the root folder of the script
 	#$$adwversion =  get-childitem -path C:\ProgramData\chocolatey\lib\adwcleaner\tools\ -filter adw* -Name
 	C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe /eula /scan /noreboot /path $PSScriptRoot 
-	Start-Process $PSScriptRoot\jrt.exe -wait
+	Start-Process $PSScriptRoot\get.bat -wait -passthru
 
 	#wait for imput at the end of the script
 	Write-Host -NoNewLine 'Press any key to continue...';
@@ -189,6 +193,7 @@ Function Reports {
 	#Nothing to report yet...
 	$sfcreport = Get-Content $PSScriptRoot\sfc.txt
 	$sfcreport | Select-Object -last 5
+	$SuperAntiSpywareLogs = get-childitem C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\ -name
 
 }
 
