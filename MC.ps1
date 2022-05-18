@@ -186,7 +186,9 @@ Function RunMCScript {
 
 Function Reports {
     #Nothing to report yet...
-	
+	$sfcreport = Get-Content $PSScriptRoot\sfc.txt
+	$sfcreport | Select-Object -last 5
+	#https://techgenix.com/read-text-file-powershell/
 }
 
 Function Cleanup {
