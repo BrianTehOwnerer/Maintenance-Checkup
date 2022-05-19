@@ -7,6 +7,7 @@ $DriveAdvisorurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/d
 $DAoutpath = "$PSScriptRoot/driveadvisor.msi"
 $MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
 $MCzippath = "$PSScriptRoot/mc.zip"
+$SuperAntiSpywareLogpath = "C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\"
 
 <#
  .SYNOPSIS
@@ -139,6 +140,7 @@ Function RunMCScript {
 	"System restore enabled"
 	Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "MODIFY_SETTINGS"
 
+
 	#Gets the current power configureation scheme
 	$powercfgGUID = powercfg /getactivescheme
 	#Splits out just the GUID from the active scheme
@@ -147,53 +149,72 @@ Function RunMCScript {
 	powercfg /import $PSScriptRoot\MCpowercfg.pow 11111111-1111-2222-2222-333333333333
 	powercfg /setactive 11111111-1111-2222-2222-333333333333
 
+
 	#Optimize the C drive
 	Get-PhysicalDisk | Where-Object mediatype -match "SSD"
 	Write-Output "Optimize c drive"
 	Optimize-Volume -DriveLetter C -ReTrim
     
+
 	#Killing web browser processess
 	taskkill.exe /IM chrome.exe /F
 	taskkill.exe /IM firefox.exe /F
 	taskkill.exe /IM edge.exe /F
 
+
 	#Installs the intel CPU tester, then runs ccleaner and the battery info view
 	Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
-	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" -WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
+	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
+		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 	Start-Process $PSScriptRoot\CCleaner64.exe -Wait
 	Start-Process $PSScriptRoot\BatteryInfoView.exe -Wait 
 	#Start-Process $PSScriptRoot\BatteryInfoView.exe /scomma $PSScriptRoot\Batteryinfo.csv
 
+
 	#Running sfc scan and placing file onto desktop
-	start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot\sfc.txt 
-
-	#Runs HDtune, SAS and MBAM and pauses untill mbam is closed.
-	start-process $PSScriptRoot\HDTune.exe
-	Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
-	Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
-
-	#reset powercfg settings to pre-MC settings and delete our custom powercfg
-	powercfg /setactive $powercfgGUID
-	powercfg /delete 11111111-1111-2222-2222-333333333333
-
+	start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot\sfc.txt
+	
+	
 	#Runs ADW and JRT, waits till jrt is closed 
 	#gets adw executablename and runs adw, logs to the root folder of the script
 	#$$adwversion =  get-childitem -path C:\ProgramData\chocolatey\lib\adwcleaner\tools\ -filter adw* -Name
 	C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe /eula /scan /noreboot /path $PSScriptRoot 
 	Start-Process $PSScriptRoot\get.bat -wait -passthru
 
+	#Runs HDtune, SAS and MBAM and pauses untill mbam is closed.
+	start-process $PSScriptRoot\HDTune.exe
+	Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
+	Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
+
+
 	#wait for imput at the end of the script
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+
+
+	#reset powercfg settings to pre-MC settings and delete our custom powercfg
+	powercfg /setactive $powercfgGUID
+	powercfg /delete 11111111-1111-2222-2222-333333333333
 
 }
 
 Function Reports {
 	#https://techgenix.com/read-text-file-powershell/
 	#Nothing to report yet...
-	$sfcreport = Get-Content $PSScriptRoot\sfc.txt
-	$sfcreport | Select-Object -last 5
-	$SuperAntiSpywareLogs = get-childitem C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\ -name
+	$sfclog = get-content C:\sfc.txt -Encoding unicode | Select-String -Pattern Resource
+	$SuperAntiSpywareLogs = get-childitem $SuperAntiSpywareLogpath -name
+
+	$SASlogLocation = "C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs"
+	$SASlogFileName = Get-ChildItem $SASlogLocation | Sort-Object LastAccessTime  | Select-Object -First 1
+	$SASlognameandloc = $SASlogLocation + $SASlogFileName.name
+	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
+	$SASResults
+
+	$mbamloglocation = "C:\ProgramData\Malwarebytes\MBAMService\ScanResults\"
+	$mbamlogname = Get-ChildItem $mbamloglocation | Sort-Object LastAccessTime  | Select-Object -First 1
+	$Mbamlog = $mbamloglocation + $mbamlogname.name
+	$MBAMResults = get-content $Mbamlog | Select-String -Pattern threatName -CaseSensitive
+	$MBAMResults.Count
 
 }
 
