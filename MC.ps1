@@ -226,11 +226,28 @@ Function Reports {
 	$ADWResults = get-content $MBAMLogAndName | Select-String -Pattern Detected -CaseSensitive
 	$ADWResults
 
-	$Batteryinfolog = $PSScriptRoot/BatteryInfoView.txt
+	$Batteryinfolog = $PSScriptRoot + "/BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
 	$BatteryResults
 	
-	
+	#Writes log via another fuction for results to try and keep it cleaner
+	"Full Mantiance Checkup Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"MalwareBytes Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Total Pups Found" + $MBAMResults.Count | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"SAS Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Tracking Cookies Removed" + $SASResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"ADW Cleaner Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$ADWResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"JRT Cleaned up" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$JRTResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+ 
+
 }
 
 Function Cleanup {
