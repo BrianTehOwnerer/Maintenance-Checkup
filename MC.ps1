@@ -167,8 +167,7 @@ Function RunMCScript {
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
 		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 	Start-Process $PSScriptRoot\CCleaner64.exe -Wait
-	Start-Process $PSScriptRoot\BatteryInfoView.exe -Wait 
-	#Start-Process $PSScriptRoot\BatteryInfoView.exe /scomma $PSScriptRoot\Batteryinfo.csv
+	Start-Process $PSScriptRoot\BatteryInfoView.exe /stab test.txt 
 
 
 	#Running sfc scan and placing file onto desktop
@@ -210,12 +209,28 @@ Function Reports {
 	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
 	$SASResults
 
-	$mbamloglocation = "C:\ProgramData\Malwarebytes\MBAMService\ScanResults\"
-	$mbamlogname = Get-ChildItem $mbamloglocation | Sort-Object LastAccessTime  | Select-Object -First 1
-	$Mbamlog = $mbamloglocation + $mbamlogname.name
-	$MBAMResults = get-content $Mbamlog | Select-String -Pattern threatName -CaseSensitive
+	$MbamLogLocation = "C:\ProgramData\Malwarebytes\MBAMService\ScanResults\"
+	$MBAMLogName = Get-ChildItem $MbamLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
+	$MBAMLogAndName = $MbamLogLocation + $MBAMLogName.name
+	$MBAMResults = get-content $MBAMLogAndName | Select-String -Pattern threatName -CaseSensitive
 	$MBAMResults.Count
 
+
+	$JRTLogAndName = $PSScriptRoot + "/jrt/temp/jrt.txt"
+	$JRTResults = get-content $JRTLogAndName | Select-String -Pattern ": [1-9]"
+	$JRTResults
+
+	$ADWLogLocation = $PSScriptRoot + "Logs"
+	$ADWLogName = Get-ChildItem $ADWLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
+	$MBAMLogAndName = $ADWLogLocation + $ADWLogName.name
+	$ADWResults = get-content $MBAMLogAndName | Select-String -Pattern Detected -CaseSensitive
+	$ADWResults
+
+	$Batteryinfolog = $PSScriptRoot/BatteryInfoView.txt
+	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
+	$BatteryResults
+	
+	
 }
 
 Function Cleanup {
