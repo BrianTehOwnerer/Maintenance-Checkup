@@ -140,9 +140,9 @@ Function RunMCScript {
 	#Gets the current power configureation scheme
 	$powercfgGUID = powercfg /getactivescheme
 	#Splits out just the GUID from the active scheme
-	$powercfgGUID = $powercfgGUID.split( )[3]
+	$powercfgGUID = $powercfgGUID.split(" ")[3]
 	#Imports our custom power config as that dumb GUID, then sets it as active
-	powercfg /import $PSScriptRoot\MCpowercfg.pow 11111111-1111-2222-2222-333333333333
+	powercfg /import $PSScriptRoot + "\MCpowercfg.pow" 11111111-1111-2222-2222-333333333333
 	powercfg /setactive 11111111-1111-2222-2222-333333333333
 
 
