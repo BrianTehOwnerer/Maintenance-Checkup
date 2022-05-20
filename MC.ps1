@@ -203,7 +203,7 @@ Function Reports {
 	$sfclog = get-content $PSScriptRoot + \sfc.txt -Encoding unicode | Select-String -Pattern Resource
 	$SuperAntiSpywareLogs = get-childitem $SuperAntiSpywareLogpath -name
 
-	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware\Logs"
+	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs"
 	$SASlogFileName = Get-ChildItem $SASlogLocation | Sort-Object LastAccessTime  | Select-Object -First 1
 	$SASlognameandloc = $SASlogLocation + $SASlogFileName.name
 	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
@@ -234,15 +234,15 @@ Function Reports {
 	"Full Mantiance Checkup Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"MalwareBytes Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Total Pups Found" + $MBAMResults.Count | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"SAS Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Tracking Cookies Removed" + $SASResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Tracking Cookies Removed: " + $SASResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"ADW Cleaner Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"ADW Cleaner Results: " | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$ADWResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"JRT Cleaned up" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"JRT Cleaned up: " | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$JRTResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
