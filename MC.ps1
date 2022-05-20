@@ -166,7 +166,7 @@ Function RunMCScript {
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
 		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 	Start-Process $PSScriptRoot\CCleaner64.exe -Wait
-	Start-Process $PSScriptRoot\BatteryInfoView.exe /stab test.txt 
+	Start-Process $PSScriptRoot\BatteryInfoView.exe /stab BatteryInfoView.txt
 
 
 	#Running sfc scan and placing file onto desktop
@@ -215,11 +215,11 @@ Function Reports {
 	$JRTLogAndName = $PSScriptRoot + "\jrt\temp\jrt.txt"
 	$JRTResults = get-content $JRTLogAndName | Select-String -Pattern ": [1-9]"
 	$JRTResults
-
-	$ADWLogLocation = $PSScriptRoot + "Logs"
+    
+	$ADWLogLocation = $PSScriptRoot + "\Logs\"
 	$ADWLogName = Get-ChildItem $ADWLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
-	$MBAMLogAndName = $ADWLogLocation + $ADWLogName.name
-	$ADWResults = get-content $MBAMLogAndName | Select-String -Pattern Detected -CaseSensitive
+	$ADWLogAndName = $ADWLogLocation + $ADWLogName.name
+	$ADWResults = get-content -Literalpath $ADWLogAndName | Select-String -Pattern Detected -CaseSensitive
 	$ADWResults
 
 	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
@@ -246,7 +246,7 @@ Function Reports {
 	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$sfclog | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	notepad.exe MCResults.txt
+	notepad.exe $PSScriptRoot + "\MCResults.txt"
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
