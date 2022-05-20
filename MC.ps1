@@ -197,12 +197,9 @@ Function RunMCScript {
 }
 
 Function Reports {
-	#https://techgenix.com/read-text-file-powershell/
-	#Nothing to report yet...
 	$sfclog = get-content $PSScriptRoot\sfc.txt -Encoding unicode | Select-String -Pattern Resource
-	$SuperAntiSpywareLogs = get-childitem $SuperAntiSpywareLogpath -name
 
-	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs"
+	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\"
 	$SASlogFileName = Get-ChildItem $SASlogLocation | Sort-Object LastAccessTime  | Select-Object -First 1
 	$SASlognameandloc = $SASlogLocation + $SASlogFileName.name
 	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
@@ -215,7 +212,7 @@ Function Reports {
 	$MBAMResults.Count
 
 
-	$JRTLogAndName = $PSScriptRoot + "/jrt/temp/jrt.txt"
+	$JRTLogAndName = $PSScriptRoot + "\jrt\temp\jrt.txt"
 	$JRTResults = get-content $JRTLogAndName | Select-String -Pattern ": [1-9]"
 	$JRTResults
 
@@ -225,7 +222,7 @@ Function Reports {
 	$ADWResults = get-content $MBAMLogAndName | Select-String -Pattern Detected -CaseSensitive
 	$ADWResults
 
-	$Batteryinfolog = $PSScriptRoot + "/BatteryInfoView.txt"
+	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
 	$BatteryResults
 	
@@ -245,6 +242,8 @@ Function Reports {
 	$JRTResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$sfclog | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
