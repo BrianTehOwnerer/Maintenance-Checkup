@@ -102,7 +102,7 @@ Function InstallDAandSU {
 	}
 	else {
 		Invoke-WebRequest -Uri $DriveAdvisorurl -OutFile $DAoutpath
-		Start-Process $DAoutpath "/quiet" -wait
+		Start-Process $DAoutpath "/quiet"
 		Start-Process "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe"
 	}
 	Write-Host -NoNewLine 'Press any key to continue...';
@@ -124,9 +124,6 @@ Function DownloadFiles {
 	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 	"Installing SAS, ADW, and MBAM..."
 	choco install adwcleaner malwarebytes superantispyware -y --ignore-checksums --allow-empty-checksums
-	#delete any logs that happen to exist already for SAS or MBAM
-	Remove-Item C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\* -Recurse -Force
-	Remove-Item C:\ProgramData\Malwarebytes\MBAMService\ScanResults\* -Recurse -Force
 	
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
@@ -199,32 +196,34 @@ Function RunMCScript {
 Function Reports {
 	$sfclog = get-content $PSScriptRoot\sfc.txt -Encoding unicode | Select-String -Pattern Resource
 
+	#Im only going to comment one of these, as they are all the same.
+	#This grabs the location of the SAS Logs, ie the folder they are in.
 	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\"
+	#This line grabs all the fimes, and then grabs the newest file from the list (ie the one that was just created by our last scan)
 	$SASlogFileName = Get-ChildItem $SASlogLocation | Sort-Object LastAccessTime  | Select-Object -First 1
+	#And then puts them together for the full file path and name (C:\blabla\bla\log.txt)
 	$SASlognameandloc = $SASlogLocation + $SASlogFileName.name
+	#This reads through the file looking for the patterern "detected" and pulling out all lines with that pattern
 	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
-	$SASResults
 
 	$MbamLogLocation = "C:\ProgramData\Malwarebytes\MBAMService\ScanResults\"
 	$MBAMLogName = Get-ChildItem $MbamLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
 	$MBAMLogAndName = $MbamLogLocation + $MBAMLogName.name
 	$MBAMResults = get-content $MBAMLogAndName | Select-String -Pattern threatName -CaseSensitive
-	$MBAMResults.Count
-
 
 	$JRTLogAndName = $PSScriptRoot + "\jrt\temp\jrt.txt"
 	$JRTResults = get-content $JRTLogAndName | Select-String -Pattern ": [1-9]"
-	$JRTResults
+
     
 	$ADWLogLocation = $PSScriptRoot + "\Logs\"
 	$ADWLogName = Get-ChildItem $ADWLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
 	$ADWLogAndName = $ADWLogLocation + $ADWLogName.name
 	$ADWResults = get-content -Literalpath $ADWLogAndName | Select-String -Pattern Detected -CaseSensitive
-	$ADWResults
+
 
 	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
-	$BatteryResults
+
 	
 	#Writes log via another fuction for results to try and keep it cleaner
 	"Full Mantiance Checkup Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt
@@ -243,13 +242,17 @@ Function Reports {
 	"JRT Cleaned up: " | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$JRTResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Battery Health state" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"SFC Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$sfclog | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	notepad.exe $PSScriptRoot + "\MCResults.txt"
-	Write-Host -NoNewLine 'Press any key to continue...';
-	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Full MBAM Threats Cleaned up"  | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+ 	$MBAMResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 
+	 #opens notepad with the log file.
+	notepad.exe $PSScriptRoot + "\MCResults.txt"
 }
 
 Function Cleanup {
