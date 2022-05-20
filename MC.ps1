@@ -200,7 +200,7 @@ Function RunMCScript {
 Function Reports {
 	#https://techgenix.com/read-text-file-powershell/
 	#Nothing to report yet...
-	$sfclog = get-content $PSScriptRoot + \sfc.txt -Encoding unicode | Select-String -Pattern Resource
+	$sfclog = get-content $PSScriptRoot + "\sfc.txt" -Encoding unicode | Select-String -Pattern Resource
 	$SuperAntiSpywareLogs = get-childitem $SuperAntiSpywareLogpath -name
 
 	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs"
