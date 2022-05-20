@@ -7,7 +7,6 @@ $DriveAdvisorurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/d
 $DAoutpath = "$PSScriptRoot/driveadvisor.msi"
 $MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
 $MCzippath = "$PSScriptRoot/mc.zip"
-$SuperAntiSpywareLogpath = "C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\"
 
 <#
  .SYNOPSIS
