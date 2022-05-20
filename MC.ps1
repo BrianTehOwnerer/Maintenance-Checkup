@@ -246,7 +246,8 @@ Function Reports {
 	$JRTResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
- 
+	Write-Host -NoNewLine 'Press any key to continue...';
+	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
 }
 
