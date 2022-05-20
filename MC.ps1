@@ -200,10 +200,10 @@ Function RunMCScript {
 Function Reports {
 	#https://techgenix.com/read-text-file-powershell/
 	#Nothing to report yet...
-	$sfclog = get-content C:\sfc.txt -Encoding unicode | Select-String -Pattern Resource
+	$sfclog = get-content $PSScriptRoot + \sfc.txt -Encoding unicode | Select-String -Pattern Resource
 	$SuperAntiSpywareLogs = get-childitem $SuperAntiSpywareLogpath -name
 
-	$SASlogLocation = "C:\Users\TechPc2\AppData\Roaming\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs"
+	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware\Logs"
 	$SASlogFileName = Get-ChildItem $SASlogLocation | Sort-Object LastAccessTime  | Select-Object -First 1
 	$SASlognameandloc = $SASlogLocation + $SASlogFileName.name
 	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
