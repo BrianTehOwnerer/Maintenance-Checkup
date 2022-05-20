@@ -246,6 +246,7 @@ Function Reports {
 	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$sfclog | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	notepad.exe MCResults.txt
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
