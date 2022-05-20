@@ -233,7 +233,9 @@ Function Reports {
 	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"SAS Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Tracking Cookies Removed: " + $SASResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$SASResults[0] | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$SASResults[1] | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	$SASResults[2] | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"ADW Cleaner Results: " | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$ADWResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
