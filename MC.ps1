@@ -167,7 +167,7 @@ Function RunMCScript {
 
 
 	#Running sfc scan and placing file onto desktop
-	start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot\sfc.txt
+	start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot + "\sfc.txt"
 	
 	
 	#Runs ADW and JRT, waits till jrt is closed 
@@ -248,7 +248,7 @@ Function Reports {
 	"SFC Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	$sfclog | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Full MBAM Threats Cleaned up"  | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"Full List Of MBAM Threats Cleaned up"  | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
  	$MBAMResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 
 	 #opens notepad with the log file.
