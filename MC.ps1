@@ -163,11 +163,11 @@ Function RunMCScript {
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
 		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 	Start-Process $PSScriptRoot\CCleaner64.exe -Wait
-	Start-Process $PSScriptRoot\BatteryInfoView.exe /stab BatteryInfoView.txt
+	Start-Process $PSScriptRoot\BatteryInfoView.bat
 
 
 	#Running sfc scan and placing file onto desktop
-	start-process sfc /scannow  -RedirectStandardOutput $PSScriptRoot + "\sfc.txt"
+	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
 	
 	
 	#Runs ADW and JRT, waits till jrt is closed 
