@@ -169,11 +169,14 @@ Function RunMCScript {
 	#Running sfc scan and placing file onto desktop
 	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
 	
+	#gets adw executable name and runs adw, logs to the root folder of the script
+	$ADWLocation = "C:\ProgramData\chocolatey\lib\adwcleaner\tools\"
+	$ADWName = Get-ChildItem $ADWLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
+	$ADWLocAndName = $ADWLocation + $ADWName.name
+	Start-Process $AdwLocAndName "/eula /scan /noreboot /path $PSScriptRoot" -passthru -wait
+
 	
 	#Runs ADW and JRT, waits till jrt is closed 
-	#gets adw executablename and runs adw, logs to the root folder of the script
-	#$$adwversion =  get-childitem -path C:\ProgramData\chocolatey\lib\adwcleaner\tools\ -filter adw* -Name
-	C:\ProgramData\chocolatey\lib\adwcleaner\tools\adwcleaner_8.3.2.exe /eula /scan /noreboot /path $PSScriptRoot 
 	Start-Process $PSScriptRoot\get.bat -wait -passthru
 
 	#Runs HDtune, SAS and MBAM and pauses untill mbam is closed.
