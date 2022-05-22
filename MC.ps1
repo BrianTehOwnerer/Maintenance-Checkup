@@ -175,7 +175,7 @@ Function RunMCScript {
 	$ADWLocAndName = $ADWLocation + $ADWName.name
 	Start-Process $AdwLocAndName "/eula /scan /noreboot /path $PSScriptRoot" -passthru -wait
 
-	
+
 	#Runs ADW and JRT, waits till jrt is closed 
 	Start-Process $PSScriptRoot\get.bat -wait -passthru
 
@@ -197,6 +197,18 @@ Function RunMCScript {
 }
 
 Function Reports {
+	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
+		$SohposRegName = Get-ItemPropertyValue -Path `
+		'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+		-Name ComputerNameOverride
+		$SophosInstalled = "Sophos is Installed"
+	}
+	else {
+		$SophosInstalled = "Sophos is Not Installed"
+		$SohposRegName = "Sophos is Not Installed"
+	}
+
+
 	$sfclog = get-content $PSScriptRoot\sfc.txt -Encoding unicode | Select-String -Pattern Resource
 
 	#Im only going to comment one of these, as they are all the same.
@@ -209,10 +221,12 @@ Function Reports {
 	#This reads through the file looking for the patterern "detected" and pulling out all lines with that pattern
 	$SASResults = get-content $SASlognameandloc | Select-String -Pattern detected -CaseSensitive
 
+
 	$MbamLogLocation = "C:\ProgramData\Malwarebytes\MBAMService\ScanResults\"
 	$MBAMLogName = Get-ChildItem $MbamLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
 	$MBAMLogAndName = $MbamLogLocation + $MBAMLogName.name
 	$MBAMResults = get-content $MBAMLogAndName | Select-String -Pattern threatName -CaseSensitive
+
 
 	$JRTLogAndName = $PSScriptRoot + "\jrt\temp\jrt.txt"
 	$JRTResults = get-content $JRTLogAndName | Select-String -Pattern ": [1-9]"
@@ -230,6 +244,8 @@ Function Reports {
 	
 	#Writes log via another fuction for results to try and keep it cleaner
 	"Full Mantiance Checkup Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt
+	$SophosInstalled | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
+	"With the name of " + $SohposRegName | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"MalwareBytes Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
