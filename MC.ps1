@@ -2,11 +2,12 @@ Clear-Host
 ##Initialize Variables
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 $SecureUpdaterurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/SecureUpdater.msi"
-$SUoutpath = "$PSScriptRoot/SecureUpdater.msi"
+$SUoutpath = "$PSScriptRoot\SecureUpdater.msi"
 $DriveAdvisorurl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/driveadviser.msi"
-$DAoutpath = "$PSScriptRoot/driveadvisor.msi"
+$DAoutpath = "$PSScriptRoot\driveadvisor.msi"
 $MCZipUrl = "https://secureupdater.s3.us-east-2.amazonaws.com/downloads/mc.zip"
-$MCzippath = "$PSScriptRoot/mc.zip"
+$MCzippath = "$PSScriptRoot\mc.zip"
+$endlog = $PSScriptRoot + "\MCResults.txt"
 
 <#
  .SYNOPSIS
@@ -105,7 +106,7 @@ Function InstallDAandSU {
 		Start-Process $DAoutpath "/quiet"
 		Start-Process "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe"
 	}
-	Write-Host -NoNewLine 'Press any key to continue...';
+	Write-Host 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
 }
@@ -241,37 +242,39 @@ Function Reports {
 	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
 
-	
-	#Writes log via another fuction for results to try and keep it cleaner
-	"Full Mantiance Checkup Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt
-	$SophosInstalled | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"With the name of " + $SohposRegName | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"MalwareBytes Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"SAS Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$SASResults[0] | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$SASResults[1] | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$SASResults[2] | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"ADW Cleaner Results: " | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$ADWResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"JRT Cleaned up: " | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$JRTResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Battery Health state" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$BatteryResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"SFC Scan Results" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	$sfclog | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"==============================" | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
-	"Full List Of MBAM Threats Cleaned up"  | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
- 	$MBAMResults | Out-File -FilePath $PSScriptRoot\MCResults.txt -Append
 
-	 #opens notepad with the log file.
-	notepad.exe $PSScriptRoot + "\MCResults.txt"
+
+	#Writes log via another fuction for results to try and keep it cleaner
+	"Full Mantiance Checkup Results" | Out-File -FilePath $endlog
+	$SophosInstalled | Out-File -FilePath $endlog -Append
+	"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"MalwareBytes Scan Results" | Out-File -FilePath $endlog -Append
+	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"SAS Scan Results" | Out-File -FilePath $endlog -Append
+	$SASResults[0] | Out-File -FilePath $endlog -Append
+	$SASResults[1] | Out-File -FilePath $endlog -Append
+	$SASResults[2] | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"ADW Cleaner Results: " | Out-File -FilePath $endlog -Append
+	$ADWResults | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"JRT Cleaned up: " | Out-File -FilePath $endlog -Append
+	$JRTResults | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"Battery Health state" | Out-File -FilePath $endlog -Append
+	$BatteryResults | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"SFC Scan Results" | Out-File -FilePath $endlog -Append
+	$sfclog | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	"Full List Of MBAM Threats Cleaned up"  | Out-File -FilePath $endlog -Append
+ 	$MBAMResults | Out-File -FilePath $endlog -Append
+
+
+	#opens notepad with the log file.
+	notepad.exe $endlog
 }
 
 Function Cleanup {
