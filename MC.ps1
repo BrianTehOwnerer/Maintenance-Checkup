@@ -37,7 +37,7 @@ Menu system to select what part of the process we are on. easily extnedable to a
 Function Menu {
 	Clear-Host        
 	Do {
-		Clear-Host                                                                       
+		Clear-Host                                             
 		Write-Host -Object 'Please choose an option'
 		Write-Host -Object '**********************'
 		Write-Host -Object 'Maitance Check Options' -ForegroundColor Yellow
