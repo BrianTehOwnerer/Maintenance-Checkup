@@ -164,7 +164,7 @@ Function RunMCScript {
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
 		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
 	Start-Process $PSScriptRoot\CCleaner64.exe -Wait
-	Start-Process $PSScriptRoot\BatteryInfoView.bat
+	Start-Process $PSScriptRoot\BatteryInfoView.bat -WorkingDirectory $PSScriptRoot
 
 
 	#Running sfc scan and placing file onto desktop
@@ -185,23 +185,21 @@ Function RunMCScript {
 	Start-Process "C:\Program Files\SuperAntiSpyware\SuperAntiSpyware.exe" 
 	Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
 
+	#reset powercfg settings to pre-MC settings and delete our custom powercfg
+	powercfg /setactive $powercfgGUID
+	powercfg /delete 11111111-1111-2222-2222-333333333333
 
 	#wait for imput at the end of the script
 	Write-Host -NoNewLine 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-
-
-	#reset powercfg settings to pre-MC settings and delete our custom powercfg
-	powercfg /setactive $powercfgGUID
-	powercfg /delete 11111111-1111-2222-2222-333333333333
 
 }
 
 Function Reports {
 	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
 		$SohposRegName = Get-ItemPropertyValue -Path `
-		'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
-		-Name ComputerNameOverride
+			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+			-Name ComputerNameOverride
 		$SophosInstalled = "Sophos is Installed"
 	}
 	else {
@@ -270,7 +268,7 @@ Function Reports {
 	$sfclog | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"Full List Of MBAM Threats Cleaned up"  | Out-File -FilePath $endlog -Append
- 	$MBAMResults | Out-File -FilePath $endlog -Append
+	$MBAMResults | Out-File -FilePath $endlog -Append
 
 
 	#opens notepad with the log file.
