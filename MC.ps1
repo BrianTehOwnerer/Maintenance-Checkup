@@ -163,14 +163,19 @@ Function RunMCScript {
 	Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
 		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
+	
+	#Running sfc scan and placing file into the SMC cpuLogsResultsFolderSearch
+	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
+	#Starts an old CCleaner (does Tracking cookies, temp and reg without a lot of hastle)
 	Start-Process $PSScriptRoot\CCleaner64.exe -Wait
+	#runs a batch file that puts the batteryinfo to a text file to parase later
 	Start-Process $PSScriptRoot\BatteryInfoView.bat -WorkingDirectory $PSScriptRoot
 
 
 	#Running sfc scan and placing file onto desktop
 	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
 	
-	#gets adw executable name and runs adw, logs to the root folder of the script
+	#gets adw executable name and runs adw, logs to the root cpuLogsResultsFolderSearch of the script
 	$ADWLocation = "C:\ProgramData\chocolatey\lib\adwcleaner\tools\"
 	$ADWName = Get-ChildItem $ADWLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
 	$ADWLocAndName = $ADWLocation + $ADWName.name
@@ -211,7 +216,7 @@ Function Reports {
 	$sfclog = get-content $PSScriptRoot\sfc.txt -Encoding unicode | Select-String -Pattern Resource
 
 	#Im only going to comment one of these, as they are all the same.
-	#This grabs the location of the SAS Logs, ie the folder they are in.
+	#This grabs the location of the SAS Logs, ie the cpuLogsResultsFolderSearch they are in.
 	$SASlogLocation = $env:APPDATA + "\SUPERAntiSpyware.com\SUPERAntiSpyware\Logs\"
 	#This line grabs all the fimes, and then grabs the newest file from the list (ie the one that was just created by our last scan)
 	$SASlogFileName = Get-ChildItem $SASlogLocation | Sort-Object LastAccessTime  | Select-Object -First 1
@@ -240,6 +245,19 @@ Function Reports {
 	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
 
+	#This block is a bit of a mess, It loops through the processor diagnostics folder and snags all the RESULTS files
+	#Then searches for the word fail, if it finds it it adds that filename to a list
+	$CpuLogsResultsFolderSearch = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\*"
+	$CpuLogsandFilenames = Get-ChildItem -Path $cpuLogsResultsFolderSearch -Include *_Results.txt
+	$CpuLogsResultsFolderLiteral = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\"
+	$CpuTestFailures = "CPU Test Results Failed"
+
+	foreach ( $filename in $CpuLogsandFilenames.name) {
+		$cpulogs = $CpuLogsResultsFolderLiteral + $filename 
+		if (get-content -literalpath $cpulogs | Select-String -Pattern Fail) {
+			$CpuTestFailures += Write-Output $filename `n
+		}
+	}
 
 
 	#Writes log via another fuction for results to try and keep it cleaner
@@ -266,6 +284,8 @@ Function Reports {
 	"==============================" | Out-File -FilePath $endlog -Append
 	"SFC Scan Results" | Out-File -FilePath $endlog -Append
 	$sfclog | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	$CpuTestFailures | Out-File -FilePath $endlog -Append 
 	"==============================" | Out-File -FilePath $endlog -Append
 	"Full List Of MBAM Threats Cleaned up"  | Out-File -FilePath $endlog -Append
 	$MBAMResults | Out-File -FilePath $endlog -Append
