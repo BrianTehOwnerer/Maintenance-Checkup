@@ -188,7 +188,7 @@ Function RunMCScript {
 	Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe" -Wait
 
 	#reset powercfg settings to pre-MC settings and delete our custom powercfg
-	powercfg /setactive $powercfgGUID
+	powercfg /setactive $powercfgGUID.split(" ")[3]
 	powercfg /delete 11111111-1111-2222-2222-333333333333
 
 	#wait for imput at the end of the script
