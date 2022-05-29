@@ -175,11 +175,8 @@ Function RunMCScript {
 	#Running sfc scan and placing file onto desktop
 	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
 	
-	#gets adw executable name and runs adw, logs to the root cpuLogsResultsFolderSearch of the script
-	$ADWLocation = "C:\ProgramData\chocolatey\lib\adwcleaner\tools\"
-	$ADWName = Get-ChildItem $ADWLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
-	$ADWLocAndName = $ADWLocation + $ADWName.name
-	Start-Process $AdwLocAndName "/eula /scan /noreboot /path $PSScriptRoot" -passthru -wait
+	#runs ADWCLEANER and cleans what it finds while loging to the MC Folder
+	Start-Process adwcleaner "/eula /clean /noreboot /path $PSScriptRoot" -passthru -wait
 
 
 	#Runs ADW and JRT, waits till jrt is closed 
