@@ -245,12 +245,11 @@ Function Reports {
 	#This block is a bit of a mess, so I put it into its own function.
 	#It loops through the processor diagnostics folder and snags all the RESULTS files
 	#Then searches for the word fail, if it finds it it adds that filename to a list
-	function cpureporting {
 		
 		$CpuLogsResultsFolderSearch = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\*"
 		$CpuLogsandFilenames = Get-ChildItem -Path $cpuLogsResultsFolderSearch -Include *_Results.txt
 		$CpuLogsResultsFolderLiteral = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\"
-		$CpuTestFailures = "CPU Test Results Failed"
+		CpuTestFailures = "CPU Test Results Failed"
 	
 		foreach ( $filename in $CpuLogsandFilenames.name) {
 			$cpulogs = $CpuLogsResultsFolderLiteral + $filename 
@@ -278,8 +277,7 @@ Function Reports {
 		$CpuTestFailures = $CpuTestFailures -replace "pch_1_Results.txt", "PCH"
 		$CpuTestFailures = $CpuTestFailures -replace "spbc_1_Results.txt", "SPBC"
 		$CpuTestFailures = $CpuTestFailures -replace "Temperature_Results.txt", "Tempurature"
-	}	
-	cpureporting
+
 
 	#Writes log via another fuction for results to try and keep it cleaner
 	"Full Mantiance Checkup Results" | Out-File -FilePath $endlog
