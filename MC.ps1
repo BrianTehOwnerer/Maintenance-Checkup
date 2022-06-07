@@ -241,48 +241,52 @@ Function Reports {
 
 	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
-
+	#check memory diagnostics results, if empty writes "no resutls found"
+	$Memdiagresults = (get-eventlog -logname system -Source "Microsoft-Windows-MemoryDiagnostics-Results" -newest 1).Message
+	if (!$Memdiagresults) { $Memdiagresults = "No results found for Windows Memory Diagnostics" }
 	#This block is a bit of a mess, so I put it into its own function.
 	#It loops through the processor diagnostics folder and snags all the RESULTS files
 	#Then searches for the word fail, if it finds it it adds that filename to a list
 		
-		$CpuLogsResultsFolderSearch = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\*"
-		$CpuLogsandFilenames = Get-ChildItem -Path $cpuLogsResultsFolderSearch -Include *_Results.txt
-		$CpuLogsResultsFolderLiteral = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\"
-		CpuTestFailures = "CPU Test Results Failed"
+	$CpuLogsResultsFolderSearch = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\*"
+	$CpuLogsandFilenames = Get-ChildItem -Path $cpuLogsResultsFolderSearch -Include *_Results.txt
+	$CpuLogsResultsFolderLiteral = "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\"
+	CpuTestFailures = "CPU Test Results Failed"
 	
-		foreach ( $filename in $CpuLogsandFilenames.name) {
-			$cpulogs = $CpuLogsResultsFolderLiteral + $filename 
-			if (get-content -literalpath $cpulogs | Select-String -Pattern Fail) {
-				$CpuTestFailures += Write-Output $filename `n
-			}
+	foreach ( $filename in $CpuLogsandFilenames.name) {
+		$cpulogs = $CpuLogsResultsFolderLiteral + $filename 
+		if (get-content -literalpath $cpulogs | Select-String -Pattern Fail) {
+			$CpuTestFailures += Write-Output $filename `n
 		}
-		$CpuTestFailures = $CpuTestFailures -replace "genintel_1_Results.txt", "Not an intel CPU"
-		$CpuTestFailures = $CpuTestFailures -replace "brandstring_1_Results.txt", "Branding string"
-		$CpuTestFailures = $CpuTestFailures -replace "cache_1_Results.txt", "Cache"
-		$CpuTestFailures = $CpuTestFailures -replace "mmxsse_1_Results.txt", "MMXSSE"
-		$CpuTestFailures = $CpuTestFailures -replace "imc_1_Results.txt", "IMC"
-		$CpuTestFailures = $CpuTestFailures -replace "Math_PrimeNum_Parallel_Math_1_Results.txt", "Prime Number Generation"
-		$CpuTestFailures = $CpuTestFailures -replace "Parallel_PrimeNum_1_Results.txt", "Prime Number Generation"
-		$CpuTestFailures = $CpuTestFailures -replace "Math_PrimeNum_Parallel_PrimeNum_1_Results.txt", "Prime Number Generation"
-		$CpuTestFailures = $CpuTestFailures -replace "Math_FP_Parallel_Math_1_Results.txt", "Floating Point Math"
-		$CpuTestFailures = $CpuTestFailures -replace "Math_FP_Parallel_FP_1_Results.txt", "Floating Point Math"
-		$CpuTestFailures = $CpuTestFailures -replace "Parallel_FP_1_Results.txt", "Floating Point Math"
-		$CpuTestFailures = $CpuTestFailures -replace "AVX_Parallel_Math_1_Results.txt FMA3_Parallel_Math_1_Results.txt", "Math"
-		$CpuTestFailures = $CpuTestFailures -replace "Parallel_GPUStressW_1_Results.txt", "Software Rendering Stress Test"
-		$CpuTestFailures = $CpuTestFailures -replace "AVX_Parallel_GPUStressW_1_Results.txt" , "Software Rendering Stress Test"
-		$CpuTestFailures = $CpuTestFailures -replace "FMA3_Parallel_GPUStressW_1_Results.txt", "Software Rendering Stress Test"
-		$CpuTestFailures = $CpuTestFailures -replace "dgemm_1_Results.txt", "CPU Load Stressing"
-		$CpuTestFailures = $CpuTestFailures -replace "cpufreq_1_Results.txt", "CPU Frequency Changing (Amd CPUs fail regularly)"
-		$CpuTestFailures = $CpuTestFailures -replace "pch_1_Results.txt", "PCH"
-		$CpuTestFailures = $CpuTestFailures -replace "spbc_1_Results.txt", "SPBC"
-		$CpuTestFailures = $CpuTestFailures -replace "Temperature_Results.txt", "Tempurature"
+	}
+	$CpuTestFailures = $CpuTestFailures -replace "genintel_1_Results.txt", "Not an intel CPU"
+	$CpuTestFailures = $CpuTestFailures -replace "brandstring_1_Results.txt", "Branding string"
+	$CpuTestFailures = $CpuTestFailures -replace "cache_1_Results.txt", "Cache"
+	$CpuTestFailures = $CpuTestFailures -replace "mmxsse_1_Results.txt", "MMXSSE"
+	$CpuTestFailures = $CpuTestFailures -replace "imc_1_Results.txt", "IMC"
+	$CpuTestFailures = $CpuTestFailures -replace "Math_PrimeNum_Parallel_Math_1_Results.txt", "Prime Number Generation"
+	$CpuTestFailures = $CpuTestFailures -replace "Parallel_PrimeNum_1_Results.txt", "Prime Number Generation"
+	$CpuTestFailures = $CpuTestFailures -replace "Math_PrimeNum_Parallel_PrimeNum_1_Results.txt", "Prime Number Generation"
+	$CpuTestFailures = $CpuTestFailures -replace "Math_FP_Parallel_Math_1_Results.txt", "Floating Point Math"
+	$CpuTestFailures = $CpuTestFailures -replace "Math_FP_Parallel_FP_1_Results.txt", "Floating Point Math"
+	$CpuTestFailures = $CpuTestFailures -replace "Parallel_FP_1_Results.txt", "Floating Point Math"
+	$CpuTestFailures = $CpuTestFailures -replace "AVX_Parallel_Math_1_Results.txt FMA3_Parallel_Math_1_Results.txt", "Math"
+	$CpuTestFailures = $CpuTestFailures -replace "Parallel_GPUStressW_1_Results.txt", "Software Rendering Stress Test"
+	$CpuTestFailures = $CpuTestFailures -replace "AVX_Parallel_GPUStressW_1_Results.txt" , "Software Rendering Stress Test"
+	$CpuTestFailures = $CpuTestFailures -replace "FMA3_Parallel_GPUStressW_1_Results.txt", "Software Rendering Stress Test"
+	$CpuTestFailures = $CpuTestFailures -replace "dgemm_1_Results.txt", "CPU Load Stressing"
+	$CpuTestFailures = $CpuTestFailures -replace "cpufreq_1_Results.txt", "CPU Frequency Changing (Amd CPUs fail regularly)"
+	$CpuTestFailures = $CpuTestFailures -replace "pch_1_Results.txt", "PCH"
+	$CpuTestFailures = $CpuTestFailures -replace "spbc_1_Results.txt", "SPBC"
+	$CpuTestFailures = $CpuTestFailures -replace "Temperature_Results.txt", "Tempurature"
 
 
 	#Writes log via another fuction for results to try and keep it cleaner
 	"Full Mantiance Checkup Results" | Out-File -FilePath $endlog
 	$SophosInstalled | Out-File -FilePath $endlog -Append
 	"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	$Memdiagresults  | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"MalwareBytes Scan Results" | Out-File -FilePath $endlog -Append
 	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $endlog -Append
