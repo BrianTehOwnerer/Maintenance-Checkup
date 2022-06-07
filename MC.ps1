@@ -242,8 +242,13 @@ Function Reports {
 	$Batteryinfolog = $PSScriptRoot + "\BatteryInfoView.txt"
 	$BatteryResults = get-content $Batteryinfolog | Select-String -Pattern "Battery Health"
 	#check memory diagnostics results, if empty writes "no resutls found"
-	$Memdiagresults = (get-eventlog -logname system -Source "Microsoft-Windows-MemoryDiagnostics-Results" -newest 1).Message
-	if (!$Memdiagresults) { $Memdiagresults = "No results found for Windows Memory Diagnostics" }
+	$Memdiagresults = (get-eventlog -logname system -Source "Microsoft-Windows-MemoryDiagnostics-Results" -newest 1)
+	$MemdiagresultsMessage = $Memdiagresults.Message
+	$MemdiagresultsTime = $Memdiagresults.Time
+	if (!$Memdiagresults) { 
+		$MemdiagresultsMessage = "No results found for Windows Memory Diagnostics" 
+		$MemdiagresultsTime = "No results found for Windows Memory Diagnostics"
+	}
 	#This block is a bit of a mess, so I put it into its own function.
 	#It loops through the processor diagnostics folder and snags all the RESULTS files
 	#Then searches for the word fail, if it finds it it adds that filename to a list
@@ -286,7 +291,8 @@ Function Reports {
 	$SophosInstalled | Out-File -FilePath $endlog -Append
 	"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
-	$Memdiagresults  | Out-File -FilePath $endlog -Append
+	"Memory diagnostics ran at " + $MemdiagresultsTime | Out-File -FilePath $endlog -Append
+	$MemdiagresultsMessage | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"MalwareBytes Scan Results" | Out-File -FilePath $endlog -Append
 	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $endlog -Append
