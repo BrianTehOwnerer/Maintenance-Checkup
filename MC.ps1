@@ -106,12 +106,12 @@ Function InstallDAandSU {
 		Start-Process $DAoutpath "/quiet"
 		Start-Process "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe"
 	}
-	$DAschedualedtask = schtasks -query /TN "Drive Adviser"
-	if ($DAschedualedtask -notmatch "Drive") {
-		Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/briantehowenerer/WorkScripts/main/DAFix.ps1'))
-		Write-Host "Drive Adviser set to run at startup"
-	}
-	else { Write-host "Drive Adviser already set to start on boot" }
+	#$DAschedualedtask = schtasks -query /TN "Drive Adviser"
+	#if ($DAschedualedtask -notmatch "Drive") {
+	#	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/briantehowenerer/WorkScripts/main/DAFix.ps1'))
+	#	Write-Host "Drive Adviser set to run at startup"
+	#}
+	#else { Write-host "Drive Adviser already set to start on boot" }
 	Write-Host 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
