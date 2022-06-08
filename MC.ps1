@@ -106,6 +106,12 @@ Function InstallDAandSU {
 		Start-Process $DAoutpath "/quiet"
 		Start-Process "C:\Program Files (x86)\Drive Adviser\Drive Adviser.exe"
 	}
+	$DAschedualedtask = schtasks -query /TN "Drive Adviser"
+	if ($DAschedualedtask -notmatch "Drive") {
+		Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/briantehowenerer/WorkScripts/main/DAFix.ps1'))
+		Write-Host "Drive Adviser set to run at startup"
+	}
+	else { Write-host "Drive Adviser already set to start on boot" }
 	Write-Host 'Press any key to continue...';
 	$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
@@ -226,8 +232,8 @@ Function Reports {
 	$MbamLogLocation = "C:\ProgramData\Malwarebytes\MBAMService\ScanResults\"
 	$MBAMLogName = Get-ChildItem $MbamLogLocation | Sort-Object LastAccessTime -Descending | Select-Object -First 1
 	$MBAMLogAndName = $MbamLogLocation + $MBAMLogName.name
-	$MBAMResults = get-content $MBAMLogAndName | Select-String -Pattern threatName -CaseSensitive
-
+	$MBAMResults = get-content $MBAMLogAndName | Select-Object -Skip 1 | ConvertFrom-Json
+	
 
 	$JRTLogAndName = $PSScriptRoot + "\jrt\temp\jrt.txt"
 	$JRTResults = get-content $JRTLogAndName | Select-String -Pattern ": [1-9]"
@@ -295,7 +301,7 @@ Function Reports {
 	$MemdiagresultsMessage | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"MalwareBytes Scan Results" | Out-File -FilePath $endlog -Append
-	"Total Pups Found: " + $MBAMResults.Count | Out-File -FilePath $endlog -Append
+	"Total Pups Found: " + $MBAMResults.threatsDetected | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"SAS Scan Results" | Out-File -FilePath $endlog -Append
 	$SASResults[0] | Out-File -FilePath $endlog -Append
@@ -317,7 +323,7 @@ Function Reports {
 	$CpuTestFailures | Out-File -FilePath $endlog -Append 
 	"==============================" | Out-File -FilePath $endlog -Append
 	"Full List Of MBAM Threats Cleaned up"  | Out-File -FilePath $endlog -Append
-	$MBAMResults | Out-File -FilePath $endlog -Append
+	$MBAMResults.threats.threatname | Out-File -FilePath $endlog -Append
 
 
 	#opens notepad with the log file.
