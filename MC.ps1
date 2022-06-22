@@ -154,7 +154,7 @@ Function RunMCScript {
 
 
 	#Optimize the C drive
-	Get-PhysicalDisk | Where-Object mediatype -match "SSD"
+
 	Write-Output "Optimize c drive"
 	Optimize-Volume -DriveLetter C -ReTrim
     
@@ -216,6 +216,30 @@ Function Reports {
 	}
 
 
+	#Get Disks and match with partitions.
+	$partitions = Get-CimInstance Win32_DiskPartition
+	$physDisc = get-physicaldisk
+	$arr = @()
+	foreach ($partition in $partitions) {
+		$cims = Get-CimInstance -Query "ASSOCIATORS OF `
+							  {Win32_DiskPartition.DeviceID='$($partition.DeviceID)'} `
+							  WHERE AssocClass=Win32_LogicalDiskToPartition"
+		$regex = $partition.name -match "(\d+)"
+		$physDiscNr = $matches[0]
+		foreach ($cim in $cims) {
+			$arr += [PSCustomObject]@{
+				Drive     = $cim.deviceID
+				Partition = $partition.name
+				MediaType = $($physDisc | ? { $_.DeviceID -eq $physDiscNr } | select -expand MediaType)
+			}
+		}
+	}
+	$DiskList = $arr
+	$DiskList
+
+	#Pulls the current windows version formated 21H2 style with .DisplayVersion windows edition via ProductName
+	$Winverinfo = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+	#Pull SFC scan results
 	$sfclog = get-content $PSScriptRoot\sfc.txt -Encoding unicode | Select-String -Pattern Resource
 
 	#Im only going to comment one of these, as they are all the same.
@@ -294,11 +318,14 @@ Function Reports {
 
 	#Writes log via another fuction for results to try and keep it cleaner
 	"Full Mantiance Checkup Results" | Out-File -FilePath $endlog
+	$Winverinfo.ProductName + " Version : " + $Winverinfo.DisplayVersion
 	$SophosInstalled | Out-File -FilePath $endlog -Append
 	"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"Memory diagnostics ran at " + $MemdiagresultsTime | Out-File -FilePath $endlog -Append
 	$MemdiagresultsMessage | Out-File -FilePath $endlog -Append
+	"==============================" | Out-File -FilePath $endlog -Append
+	$DiskList | Out-File -FilePath $endlog -Append 
 	"==============================" | Out-File -FilePath $endlog -Append
 	"MalwareBytes Scan Results" | Out-File -FilePath $endlog -Append
 	"Total Pups Found: " + $MBAMResults.threatsDetected | Out-File -FilePath $endlog -Append
@@ -332,7 +359,7 @@ Function Reports {
 
 Function Cleanup {
 
-	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+	Set-ExecutionPolicy -ExecutionPolicy Restricted 
 	#this removes the install listing for an the migration tool we used during symantec to sophos migration.
 	Remove-Item -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\SophosMigrationUtility"
 
