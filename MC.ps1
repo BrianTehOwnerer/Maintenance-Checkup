@@ -162,8 +162,8 @@ Function RunMCScript {
 	#Killing web browser processess
 	taskkill.exe /IM chrome.exe /F
 	taskkill.exe /IM firefox.exe /F
-	taskkill.exe /IM edge.exe /F
-
+	taskkill.exe /IM msedge.exe /F
+	taskkill.exe /IM superantispyware.exe.exe /F
 
 	#Installs the intel CPU tester, then runs ccleaner and the battery info view
 	Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
@@ -235,7 +235,6 @@ Function Reports {
 		}
 	}
 	$DiskList = $arr
-	$DiskList
 
 	#Pulls the current windows version formated 21H2 style with .DisplayVersion windows edition via ProductName
 	$Winverinfo = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion")
