@@ -138,9 +138,31 @@ Function DownloadFiles {
 
 
 Function RunMCScript {
+	Clear-Host
+	#This checks the name sophos sees for our online system, and if it doesnt match the regex requires the user
+	#to imput a valid name.
+	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
+		$Sophosreg = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System')
+	
+		if (!$sophosreg) { $SophosRegName = "nope" }
+		$SophosRegName
+		Set-ItemProperty -Path `
+			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+			-Name ComputerNameOverride -Value $SohposRegName
+	
+		$SohposRegName = Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' -Name ComputerNameOverride -ErrorAction Ignore
+		while ($SohposRegName -notmatch '\d{4} #(\d){4,8} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') {
+			$SohposRegName = Read-Host -Prompt 'Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928'
+			Set-ItemProperty -Path `
+				'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+				-Name ComputerNameOverride -Value $SohposRegName
+		}
+	
+	}
+	
 	#turns on system restore for drive C and takes a snapshot.
 	Enable-ComputerRestore -Drive "C:\"
-	"System restore enabled"
+	Write-host "System restore enabled"
 	Checkpoint-Computer -Description "Schrock Maintance Checkup" -RestorePointType "MODIFY_SETTINGS"
 
 
@@ -149,6 +171,9 @@ Function RunMCScript {
 	#Splits out just the GUID from the active scheme
 	$powercfgGUID = $powercfgGUID.split(" ")[3]
 	#Imports our custom power config as that dumb GUID, then sets it as active
+
+	$newpwrcfg = $DesktopPath + "\SMC\MCpowercfg.pow"
+	powercfg /import $newpwrcfg 11111111-1111-2222-2222-333333333333
 	powercfg /import $PSScriptRoot + "\MCpowercfg.pow" 11111111-1111-2222-2222-333333333333
 	powercfg /setactive 11111111-1111-2222-2222-333333333333
 
@@ -230,7 +255,7 @@ Function Reports {
 			$arr += [PSCustomObject]@{
 				Drive     = $cim.deviceID
 				Partition = $partition.name
-				MediaType = $($physDisc | ? { $_.DeviceID -eq $physDiscNr } | select -expand MediaType)
+				MediaType = $($physDisc | Where-Object { $_.DeviceID -eq $physDiscNr } | Select-Object -expand MediaType)
 			}
 		}
 	}
