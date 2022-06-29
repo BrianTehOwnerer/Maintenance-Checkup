@@ -150,9 +150,12 @@ Function RunMCScript {
 			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
 			-Name ComputerNameOverride -Value $SohposRegName
 	
-		$SohposRegName = Get-ItemPropertyValue -Path 'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' -Name ComputerNameOverride -ErrorAction Ignore
+		$SohposRegName = Get-ItemPropertyValue -Path `
+			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+			-Name ComputerNameOverride -ErrorAction Ignore
 		while ($SohposRegName -notmatch '\d{4} #(\d){4,8} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') {
-			$SohposRegName = Read-Host -Prompt 'Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928'
+			Write-Host "Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928"
+			$SohposRegName = Read-Host -Prompt "Name "
 			Set-ItemProperty -Path `
 				'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
 				-Name ComputerNameOverride -Value $SohposRegName
