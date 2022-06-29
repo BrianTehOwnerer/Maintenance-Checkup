@@ -144,8 +144,7 @@ Function RunMCScript {
 	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
 		$Sophosreg = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System')
 	
-		if (!$sophosreg) { $SophosRegName = "nope" }
-		$SophosRegName
+		if (!$Sophosreg.ComputerNameOverride) { $SophosRegName = "nope" }
 		Set-ItemProperty -Path `
 			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
 			-Name ComputerNameOverride -Value $SohposRegName
