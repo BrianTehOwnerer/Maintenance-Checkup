@@ -144,23 +144,25 @@ Function RunMCScript {
 	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
 		$Sophosreg = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System')
 	
-		if (!$Sophosreg.ComputerNameOverride) { $SophosRegName = "nope" }
-		Set-ItemProperty -Path `
-			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
-			-Name ComputerNameOverride -Value $SohposRegName
-	
-		$SohposRegName = Get-ItemPropertyValue -Path `
-			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
-			-Name ComputerNameOverride -ErrorAction Ignore
-		while ($SohposRegName -notmatch '\d{4} #(\d){4,8} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') {
-			Write-Host "Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928"
-			$SohposRegName = Read-Host -Prompt "Name "
+		if ($Sophosreg.ComputerNameOverride -notmatch '\d{4} #(\d){4,12} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') { 
+			$SohposRegName = "nope" 
 			Set-ItemProperty -Path `
 				'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
 				-Name ComputerNameOverride -Value $SohposRegName
-		}
 	
-	}
+			$SohposRegName = Get-ItemPropertyValue -Path `
+				'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+				-Name ComputerNameOverride -ErrorAction Ignore
+			while ($SohposRegName -notmatch '\d{4} #(\d){4,12} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') {
+				Write-Host "Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928"
+				$SohposRegName = Read-Host -Prompt "Name "
+				Set-ItemProperty -Path `
+					'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
+					-Name ComputerNameOverride -Value $SohposRegName
+			}
+	
+		}
+ }
 	
 	#turns on system restore for drive C and takes a snapshot.
 	Enable-ComputerRestore -Drive "C:\"
