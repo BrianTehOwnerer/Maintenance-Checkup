@@ -146,6 +146,7 @@ Function RunMCScript {
 	
 		if ($Sophosreg.ComputerNameOverride -notmatch '\d{4} #(\d){4,12} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') { 
 			$SohposRegName = "nope" 
+			$Originalsophosname = $Sophosreg.ComputerNameOverride
 			Set-ItemProperty -Path `
 				'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
 				-Name ComputerNameOverride -Value $SohposRegName
@@ -155,14 +156,14 @@ Function RunMCScript {
 				-Name ComputerNameOverride -ErrorAction Ignore
 			while ($SohposRegName -notmatch '\d{4} #(\d){4,12} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') {
 				Write-Host "Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928"
+				Write-Host "Originaly this was named " + $Originalsophosname
 				$SohposRegName = Read-Host -Prompt "Name "
 				Set-ItemProperty -Path `
 					'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
 					-Name ComputerNameOverride -Value $SohposRegName
 			}
-	
 		}
- }
+	}
 	
 	#turns on system restore for drive C and takes a snapshot.
 	Enable-ComputerRestore -Drive "C:\"
