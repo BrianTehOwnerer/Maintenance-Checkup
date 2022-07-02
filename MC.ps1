@@ -23,7 +23,7 @@ $endlog = $PSScriptRoot + "\MCResults.txt"
  #>
 function Main {
 	#This sets the window to something more reasonable than the defaults on crappy 720p laptops
-	powershell -noexit -command "[console]::WindowWidth=100; [console]::WindowHeight=30; [console]::BufferWidth=[console]::WindowWidth"
+	#powershell -noexit -command "[console]::WindowWidth=100; [console]::WindowHeight=30; [console]::BufferWidth=[console]::WindowWidth"
 
 	Menu
 }
