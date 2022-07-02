@@ -270,6 +270,7 @@ Function Reports {
 
 	#Pulls the current windows version formated 21H2 style with .DisplayVersion windows edition via ProductName
 	$Winverinfo = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+	
 	#Pull SFC scan results
 	$sfclog = get-content $PSScriptRoot\sfc.txt -Encoding unicode | Select-String -Pattern Resource
 
@@ -349,7 +350,7 @@ Function Reports {
 
 	#Writes log via another fuction for results to try and keep it cleaner
 	"Full Mantiance Checkup Results" | Out-File -FilePath $endlog
-	$Winverinfo.ProductName + " Version : " + $Winverinfo.DisplayVersion
+	$Winverinfo.ProductName + " Version: " + $Winverinfo.DisplayVersion | Out-File -FilePath $endlog -Append
 	$SophosInstalled | Out-File -FilePath $endlog -Append
 	"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
