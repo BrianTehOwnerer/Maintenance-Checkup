@@ -158,7 +158,7 @@ Function RunMCScript {
 				-Name ComputerNameOverride -ErrorAction Ignore
 			while ($SohposRegName -notmatch '\d{4} #(\d){4,12} \w* \w* \d\d\d-\d\d\d-\d\d\d\d') {
 				Write-Host "Imput the Sophos Name Here eg, 0311 #49382 Bob Boozer 555-403-2928"
-				Write-Host "Originaly this was named " + $Originalsophosname
+				Write-Host "Originaly this was named " $Originalsophosname
 				$SohposRegName = Read-Host -Prompt "Name "
 				Set-ItemProperty -Path `
 					'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
@@ -200,7 +200,14 @@ Function RunMCScript {
 	#Installs the intel CPU tester, then runs ccleaner and the battery info view
 	Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
-		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\" -Wait
+		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\"
+	$wshell = New-Object -ComObject wscript.shell;
+    start-sleep 1
+    $wshell.AppActivate('Intel')
+	$wshell.SendKeys('{TAB} {TAB} {TAB} {TAB} ~')
+    start-sleep 1
+	$wshell.SendKeys('%t {down} {down} {right} {down} ~')
+
 	
 	#Running sfc scan and placing file into the SMC cpuLogsResultsFolderSearch
 	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
