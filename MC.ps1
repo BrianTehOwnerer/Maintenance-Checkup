@@ -50,9 +50,9 @@ Function Menu {
 		Write-Host -Object ''
 		Write-Host -Object '3.  Run Scripts for MC '
 		Write-Host -Object ''
-		Write-Host -Object '4.  Reports --Work in Progress'
+		Write-Host -Object '4.  Reports '
 		Write-Host -Object ''
-		Write-Host -Object '5.  Cleanup --Work in Progress'
+		Write-Host -Object '5.  Cleanup '
 		Write-Host -Object $errout
 		$Menu = Read-Host -Prompt '(0-5 or Q to Quit)'
  
@@ -201,14 +201,7 @@ Function RunMCScript {
 	Start-Process $PSScriptRoot\CPUTester.exe /passive -wait
 	start-process "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\Win-IPDT64.exe" `
 		-WorkingDirectory "C:\Program Files\Intel Corporation\Intel Processor Diagnostic Tool 64bit\"
-	$wshell = New-Object -ComObject wscript.shell;
-    start-sleep 1
-    $wshell.AppActivate('Intel')
-	$wshell.SendKeys('{TAB} {TAB} {TAB} {TAB} ~')
-    start-sleep 1
-	$wshell.SendKeys('%t {down} {down} {right} {down} ~')
 
-	
 	#Running sfc scan and placing file into the SMC cpuLogsResultsFolderSearch
 	start-process sfc /scannow -RedirectStandardOutput $PSScriptRoot\sfc.txt -NoNewWindow
 	#Starts an old CCleaner (does Tracking cookies, temp and reg without a lot of hastle)
