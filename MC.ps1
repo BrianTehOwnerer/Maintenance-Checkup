@@ -143,6 +143,7 @@ Function RunMCScript {
 	Clear-Host
 	#This checks the name sophos sees for our online system, and if it doesnt match the regex requires the user
 	#to imput a valid name.
+	<# 
 	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
 		$Sophosreg = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System')
 	
@@ -165,7 +166,7 @@ Function RunMCScript {
 					-Name ComputerNameOverride -Value $SohposRegName
 			}
 		}
-	}
+	}#>
 	
 	#turns on system restore for drive C and takes a snapshot.
 	Enable-ComputerRestore -Drive "C:\"
@@ -236,6 +237,7 @@ Function RunMCScript {
 }
 
 Function Reports {
+	<#
 	if (Test-Path -Path "C:\Program Files\Sophos\Sophos File Scanner\SophosFS.exe") {
 		$SohposRegName = Get-ItemPropertyValue -Path `
 			'HKLM:\SOFTWARE\WOW6432Node\Sophos\Management Communications System\' `
@@ -245,7 +247,7 @@ Function Reports {
 	else {
 		$SophosInstalled = "Sophos is Not Installed"
 		$SohposRegName = "Sophos is Not Installed"
-	}
+	}#>
 
 
 	#Get Disks and match with partitions.
@@ -352,7 +354,7 @@ Function Reports {
 	"Full Mantiance Checkup Results" | Out-File -FilePath $endlog
 	$Winverinfo.ProductName + " Version: " + $Winverinfo.DisplayVersion | Out-File -FilePath $endlog -Append
 	$SophosInstalled | Out-File -FilePath $endlog -Append
-	"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
+	#"With the name of " + $SohposRegName | Out-File -FilePath $endlog -Append
 	"==============================" | Out-File -FilePath $endlog -Append
 	"Memory diagnostics ran at " + $MemdiagresultsTime | Out-File -FilePath $endlog -Append
 	$MemdiagresultsMessage | Out-File -FilePath $endlog -Append
